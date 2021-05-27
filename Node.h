@@ -39,8 +39,9 @@ public:
     {
         QRectF rec = boundingRect();
         if (Pressed) {
-            QPen pen_pressed(Qt::blue, 3);
-            QBrush brush_pressed(Qt::blue);
+            QColor blue(102, 0, 51);
+            QPen pen_pressed(blue, 3);
+            QBrush brush_pressed(blue);
             painter->setPen(pen_pressed);
             painter->setBrush(brush_pressed);
             painter->drawEllipse(rec);

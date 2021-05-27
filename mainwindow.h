@@ -52,6 +52,8 @@ private slots:
 
     void on_button_insertSomeSplay_clicked();
 
+    void Synchronize(int, QString);
+
 private:
     Ui::MainWindow *ui;
     QGraphicsScene *scene_AVL;

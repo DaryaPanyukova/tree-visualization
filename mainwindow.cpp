@@ -84,11 +84,20 @@ std::pair <int, int> DrawTree (QGraphicsScene* &scene, node_AVL* ptr, double y, 
     scene->addItem(my_node);
 
     QString text = QString::number(ptr->data);
-    QFont Font("Franklin Gothic Medium", 14);
+
+    int size = 14;
+    if (text.size() >= 4)
+        size = 14 - 1.7* (text.size() - 2);
+    if (text.size() == 7)
+        size = 6;
+    if (text.size() >= 8)
+        size = 5;
+    QFont Font("Franklin Gothic Medium", size);
 
     QGraphicsTextItem *lable = scene->addText(text, Font);
 
-    lable->setPos(x + radius - 10*text.size(), y + radius - 17);
+    int coordX = x + radius - 5*text.size() - 7;
+    lable->setPos(std::max(x, coordX) , y + radius -  size * 1.3);
     lable->setDefaultTextColor(Qt::white);
 
     if (left.first != -1) {
@@ -123,12 +132,22 @@ std::pair <int, int> DrawTree (QGraphicsScene* &scene, node_RB* ptr, double y, i
     Node *my_node = new Node(x, y, diameter, blackpen, brush, ptr->data, type);
     scene->addItem(my_node);
 
+
     QString text = QString::number(ptr->data);
-    QFont Font("Franklin Gothic Medium", 14);
+
+    int size = 14;
+    if (text.size() >= 4)
+        size = 14 - 1.7* (text.size() - 2);
+    if (text.size() == 7)
+        size = 6;
+    if (text.size() >= 8)
+        size = 5;
+    QFont Font("Franklin Gothic Medium", size);
 
     QGraphicsTextItem *lable = scene->addText(text, Font);
 
-    lable->setPos(x + radius - 10*text.size(), y + radius - 17);
+    int coordX = x + radius - 5*text.size() - 7;
+    lable->setPos(std::max(x, coordX) , y + radius -  size * 1.3);
     lable->setDefaultTextColor(Qt::white);
 
     if (left.first != -1) {
@@ -159,11 +178,20 @@ std::pair <int, int> DrawTree (QGraphicsScene* &scene, node_Treap* ptr, double y
     scene->addItem(my_node);
 
     QString text = QString::number(ptr->key);
-    QFont Font("Franklin Gothic Medium", 14);
+
+    int size = 14;
+    if (text.size() >= 4)
+        size = 14 - 1.7* (text.size() - 2);
+    if (text.size() == 7)
+        size = 6;
+    if (text.size() >= 8)
+        size = 5;
+    QFont Font("Franklin Gothic Medium", size);
 
     QGraphicsTextItem *lable = scene->addText(text, Font);
 
-    lable->setPos(x + radius - 10*text.size(), y + radius - 17);
+    int coordX = x + radius - 5*text.size() - 7;
+    lable->setPos(std::max(x, coordX) , y + radius -  size * 1.3);
     lable->setDefaultTextColor(Qt::white);
 
     if (left.first != -1) {
@@ -194,11 +222,20 @@ std::pair <int, int> DrawTree (QGraphicsScene* &scene, node_Splay* ptr,  double 
     scene->addItem(my_node);
 
     QString text = QString::number(ptr->data);
-    QFont Font("Franklin Gothic Medium", 14);
+
+    int size = 14;
+    if (text.size() >= 4)
+        size = 14 - 1.7* (text.size() - 2);
+    if (text.size() == 7)
+        size = 6;
+    if (text.size() >= 8)
+        size = 5;
+    QFont Font("Franklin Gothic Medium", size);
 
     QGraphicsTextItem *lable = scene->addText(text, Font);
 
-    lable->setPos(x + radius - 10*text.size(), y + radius - 17);
+    int coordX = x + radius - 5*text.size() - 7;
+    lable->setPos(std::max(x, coordX) , y + radius -  size * 1.3);
     lable->setDefaultTextColor(Qt::white);
 
     if (left.first != -1) {
@@ -341,12 +378,133 @@ std::pair <int, int> DrawTree (QGraphicsScene* &scene, node_Splay* ptr,  double 
 }*/
 
 
+int Random(int a, int b) {
+    if (a > 0) return a + rand() % (b - a);
+    else return a + rand() % (abs(a) + b);
+}
+int Read_InsertSome(QString &type) {
+    bool bOk;
+    QString inp = QInputDialog::getText(0, "Insert N nodes",
+        QString("Insert N nodes belonging to [a; b] \n \n"), QLineEdit::Normal, type, &bOk);
+    if (bOk)
+    {
+        int value = inp.toInt();
+        return value;
+    } else {
+        return -1;
+    }
+}
+
+void MainWindow:: Synchronize(int num, QString type) {
+    ui ->textEdit_insertAVL->clear();
+    ui ->textEdit_insertRB->clear();
+    ui ->textEdit_insertTreap->clear();
+    ui ->textEdit_insertSplay->clear();
+
+    ui ->textEdit_deleteAVL->clear();
+    ui ->textEdit_deleteRB->clear();
+    ui ->textEdit_deleteTreap->clear();
+    ui ->textEdit_deleteSplay->clear();
+
+    scene_AVL->clear();
+    scene_RB->clear();
+    scene_Treap->clear();
+    scene_Splay->clear();
+
+    if (type == "Delete All") {
+        DeleteTree(root_AVL);
+        root_AVL = nullptr;
+
+        DeleteTree(root_RB);
+        root_RB = nullptr;
+
+        DeleteTree(root_Treap);
+        root_Treap = nullptr;
+
+        DeleteTree(root_Splay);
+        root_Splay = nullptr;
+
+        return;
+    }
+    else if (type == "Insert") {
+        if (!FindElem(root_AVL, num))  Insert(num, root_AVL);
+        if (!FindElem(root_RB, num))Insert(num, root_RB, root_RB);
+        if (!FindElem(root_Treap, num))Insert(num, root_Treap);
+        if (!FindElem(root_Splay, num))Insert(root_Splay, root_Splay, num);
+    }
+    else if (type == "Delete") {
+        for (auto elem: deleteAVL) {
+              if (FindElem(root_AVL, elem))  Delete(elem, root_AVL);
+              if (FindElem(root_RB, elem))  Delete(elem, root_RB);
+              if (FindElem(root_Treap, elem)) Delete(elem, root_Treap);
+              if (FindElem(root_Splay, elem)) Delete(root_Splay, elem);
+        }
+        for (auto elem: deleteRB) {
+            if (FindElem(root_AVL, elem))  Delete(elem, root_AVL);
+            if (FindElem(root_RB, elem))  Delete(elem, root_RB);
+            if (FindElem(root_Treap, elem)) Delete(elem, root_Treap);
+            if (FindElem(root_Splay, elem)) Delete(root_Splay, elem);
+        }
+        for (auto elem: deleteTreap) {
+            if (FindElem(root_AVL, elem))  Delete(elem, root_AVL);
+            if (FindElem(root_RB, elem))  Delete(elem, root_RB);
+            if (FindElem(root_Treap, elem)) Delete(elem, root_Treap);
+            if (FindElem(root_Splay, elem)) Delete(root_Splay, elem);
+        }
+        for (auto elem: deleteSplay) {
+            if (FindElem(root_AVL, elem))  Delete(elem, root_AVL);
+            if (FindElem(root_RB, elem))  Delete(elem, root_RB);
+            if (FindElem(root_Treap, elem)) Delete(elem, root_Treap);
+            if (FindElem(root_Splay, elem)) Delete(root_Splay, elem);
+        }
+        deleteAVL.clear();
+        deleteRB.clear();
+        deleteTreap.clear();
+        deleteSplay.clear();
+    }
+    else if (type == "Insert Some") {
+        QString s = "N";
+        int N = Read_InsertSome(s);
+        if (N == -1) return;
+
+        s = "a";
+        int a = Read_InsertSome(s);
+        if (a == -1) return;
+
+        s = "b";
+        int b = Read_InsertSome(s);
+        if (b == -1) return;
+
+        while (N--) {
+            int num = Random(a, b);
+
+            if (FindElem(root_AVL, num)) {
+                N+=1;
+            } else {
+                Insert(num, root_AVL);
+                if (!FindElem(root_RB, num))Insert(num, root_RB, root_RB);
+                if (!FindElem(root_Treap, num))Insert(num, root_Treap);
+                if (!FindElem(root_Splay, num))Insert(root_Splay, root_Splay, num);
+            }
+        }
+    }
+    DrawTree(scene_AVL, root_AVL, Height/2, Width/2  - 75);
+    DrawTree(scene_RB, root_RB, Height/2, Width/2  - 75);
+    DrawTree(scene_Splay, root_Splay, Height/2, Width/2  - 75);
+    DrawTree(scene_Treap, root_Treap, Height/2, Width/2  - 75);
+}
+
 void MainWindow::on_button_insertAVL_clicked()
 {
     QString input = ui->textEdit_insertAVL ->toPlainText();
     ui->textEdit_insertAVL->clear();
     int num = input.toInt();
 
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Insert";
+        Synchronize(num, type);
+        return;
+    }
     Insert(num, root_AVL);
 
     scene_AVL->clear();
@@ -357,30 +515,40 @@ void MainWindow::on_button_insertAVL_clicked()
 }
 void MainWindow::on_button_insertRB_clicked()
 {
-    int width = this->width() - 88;
-    scene_RB->clear();
-    //scene_RB->setSceneRect(0, 0, width,this->height());
 
     QString input = ui->textEdit_insertRB ->toPlainText();
     ui->textEdit_insertRB->clear();
     int num = input.toInt();
 
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Insert";
+        Synchronize(num, type);
+        return;
+    }
+
+    if (FindElem(root_RB, num)) return;
+    scene_RB->clear();
+    //scene_RB->setSceneRect(0, 0, width,this->height());
+
     Insert(num, root_RB, root_RB);
 
-    int height = GetHeight(root_RB);
+    // int height = GetHeight(root_RB);
    // double dx = std::pow(2, height) * 25;
     DrawTree(scene_RB, root_RB, Height/2, Width/2  - 75);
 }
 void MainWindow::on_button_insertTreap_clicked()
 {
-    int width = this->width() - 88;
-    scene_Treap->clear();
-    // scene_Treap->setSceneRect(0, 0, width,this->height());
-
     QString input = ui->textEdit_insertTreap ->toPlainText();
     ui->textEdit_insertTreap->clear();
     int num = input.toInt();
 
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Insert";
+        Synchronize(num, type);
+        return;
+    }
+    scene_Treap->clear();
+    // scene_Treap->setSceneRect(0, 0, width,this->height());
     Insert(num, root_Treap);
 
 
@@ -391,14 +559,20 @@ void MainWindow::on_button_insertTreap_clicked()
 }
 void MainWindow::on_button_insertSplay_clicked()
 {
-    scene_Splay->clear();
     QString input = ui->textEdit_insertSplay ->toPlainText();
     ui->textEdit_insertSplay->clear();
     int num = input.toInt();
 
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Insert";
+        Synchronize(num, type);
+        return;
+    }
+
+    scene_Splay->clear();
     Insert(root_Splay, root_Splay, num);
 
-    int height = GetHeight(root_Splay);
+    // int height = GetHeight(root_Splay);
    // double dx = std::pow(2, height) * 25;
    // double dx = 30;
     DrawTree(scene_Splay, root_Splay, Height/2, Width/2  - 75);
@@ -408,15 +582,25 @@ void MainWindow::on_button_insertSplay_clicked()
 void MainWindow::on_button_deleteAVL_clicked()
 {
     QString input = ui->textEdit_deleteAVL ->toPlainText();
-    ui->textEdit_deleteAVL->clear();    
+    ui->textEdit_deleteAVL->clear();
+
     int num;
+    num = input.toInt();
+    if (input.size() > 0) deleteAVL.push_back(num);
+
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Delete";
+        Synchronize(num, type);
+        return;
+    }
+
+    /*
     if (input == "0") {
         num = 0;
     } else {
         num = input.toInt();
         input = "not a zero";
     }
-
     if (num == 0) {
         if  (input != "not a zero") {
             if (FindElem(root_AVL, num)) {
@@ -425,7 +609,7 @@ void MainWindow::on_button_deleteAVL_clicked()
         }
     } else if (FindElem(root_AVL, num)) {
         Delete(num, root_AVL);
-    }
+    }*/
 
     for (auto elem: deleteAVL) {
           Delete(elem, root_AVL);
@@ -446,7 +630,15 @@ void MainWindow::on_button_deleteRB_clicked()
     ui->textEdit_deleteRB->clear();
 
     int num;
-    if (input == "0") {
+    num = input.toInt();
+    if (input.size() > 0) deleteRB.push_back(num);
+
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Delete";
+        Synchronize(num, type);
+        return;
+    }
+    /*if (input == "0") {
         num = 0;
     } else {
         num = input.toInt();
@@ -461,14 +653,14 @@ void MainWindow::on_button_deleteRB_clicked()
         }
     } else if (FindElem(root_RB, num)) {
         Delete(num, root_RB);
-    }
+    }*/
 
     for (auto elem: deleteRB) {
           Delete(elem, root_RB);
     }
     deleteRB.clear();
 
-    int height = GetHeight(root_RB);
+    // int height = GetHeight(root_RB);
   //  double dx = std::pow(2, height) * 25;
     DrawTree(scene_RB, root_RB, Height/2, Width/2  - 75);
 }
@@ -481,7 +673,15 @@ void MainWindow::on_button_deleteTreap_clicked()
     ui->textEdit_deleteTreap->clear();
 
     int num;
-    if (input == "0") {
+    num = input.toInt();
+    if (input.size() > 0) deleteTreap.push_back(num);
+
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Delete";
+        Synchronize(num, type);
+        return;
+    }
+    /*if (input == "0") {
         num = 0;
     } else {
         num = input.toInt();
@@ -496,14 +696,14 @@ void MainWindow::on_button_deleteTreap_clicked()
         }
     } else if (FindElem(root_Treap, num)) {
         Delete(num, root_Treap);
-    }
+    }*/
 
     for (auto elem: deleteTreap) {
           Delete(elem, root_Treap);
     }
     deleteTreap.clear();
 
-    int height = GetHeight(root_Treap);
+    // int height = GetHeight(root_Treap);
     //double dx = std::pow(2, height) * 25;
     DrawTree(scene_Treap, root_Treap, Height/2, Width/2  - 75);
 }
@@ -515,7 +715,15 @@ void MainWindow::on_button_deleteSplay_clicked()
     ui->textEdit_deleteSplay->clear();
 
     int num;
-    if (input == "0") {
+    num = input.toInt();
+    if (input.size() > 0) deleteSplay.push_back(num);
+
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Delete";
+        Synchronize(num, type);
+        return;
+    }
+    /*if (input == "0") {
         num = 0;
     } else {
         num = input.toInt();
@@ -529,14 +737,14 @@ void MainWindow::on_button_deleteSplay_clicked()
         }
     } else if (FindElem(root_Splay, num)) {
        Delete(root_Splay, num);
-    }
+    }*/
 
     for (auto elem: deleteSplay) {
          Delete(root_Splay, elem);
     }
     deleteSplay.clear();
 
-    int height = GetHeight(root_Splay);
+    //int height = GetHeight(root_Splay);
     //double dx = std::pow(2, height) * 25;
     //double dx
     DrawTree(scene_Splay, root_Splay, Height/2, Width/2  - 75);
@@ -545,44 +753,57 @@ void MainWindow::on_button_deleteSplay_clicked()
 
 void MainWindow::on_button_delete_all_AVL_clicked()
 {
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Delete All";
+        Synchronize(-1, type);
+        return;
+    }
     scene_AVL->clear();
     DeleteTree(root_AVL);
     root_AVL = nullptr;
 }
 void MainWindow::on_button_delete_all_RB_clicked()
 {
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Delete All";
+        Synchronize(-1, type);
+        return;
+    }
     scene_RB->clear();
     DeleteTree(root_RB);
     root_RB = nullptr;
 }
 void MainWindow::on_button_delete_all_Treap_clicked()
 {
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Delete All";
+        Synchronize(-1, type);
+        return;
+    }
     scene_Treap->clear();
     DeleteTree(root_Treap);
     root_Treap = nullptr;
 }
 void MainWindow::on_button_delete_all_Splay_clicked()
 {
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Delete All";
+        Synchronize(-1, type);
+        return;
+    }
     scene_Splay->clear();
     DeleteTree(root_Splay);
     root_Splay = nullptr;
 }
 
-int Read_InsertSome(QString &type) {
-    bool bOk;
-    QString inp = QInputDialog::getText(0, "Insert N nodes",
-        QString("Insert N nodes belonging to [a; b] \n \n"), QLineEdit::Normal, type, &bOk);
-    if (bOk)
-    {
-        int value = inp.toInt();
-        return value;
-    } else {
-        return -1;
-    }
-}
 
 void MainWindow::on_button_insertSomeAVL_clicked()
 {
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Insert Some";
+        Synchronize(-1, type);
+        return;
+    }
     QString s = "N";
     int N = Read_InsertSome(s);
     if (N == -1) return;
@@ -595,21 +816,14 @@ void MainWindow::on_button_insertSomeAVL_clicked()
     int b = Read_InsertSome(s);
     if (b == -1) return;
 
-   /* while (N--) {
-        srand((unsigned)time(NULL));
-        int num = (rand()%(b-a)) + a;
+    while (N--) {
+        int num = Random(a, b);
 
         if (FindElem(root_AVL, num)) {
             N+=1;
         } else {
             Insert(num, root_AVL);
         }
-    }*/
-
-    for (int i = a; i < b && N > 0; ++i) {
-        if (FindElem(root_AVL, i) ) continue;
-        Insert(i, root_AVL);
-        N--;
     }
 
     scene_AVL->clear();
@@ -620,6 +834,11 @@ void MainWindow::on_button_insertSomeAVL_clicked()
 }
 void MainWindow::on_button_insertSomeRB_clicked()
 {
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Insert Some";
+        Synchronize(-1, type);
+        return;
+    }
     QString s = "N";
     int N = Read_InsertSome(s);
     if (N == -1) return;
@@ -632,32 +851,27 @@ void MainWindow::on_button_insertSomeRB_clicked()
     int b = Read_InsertSome(s);
     if (b == -1) return;
 
-   /* while (N--) {
-        srand((unsigned)time(NULL));
-        int num = (rand()%(b-a)) + a;
+    while (N--) {
+        int num = Random(a, b);
 
-        if (FindElem(root_AVL, num)) {
+        if (FindElem(root_RB, num)) {
             N+=1;
         } else {
-            Insert(num, root_AVL);
+            Insert(num, root_RB, root_RB);
         }
-    }*/
-
-    for (int i = a; i < b && N > 0; ++i) {
-        if (FindElem(root_RB, i) ) continue;
-       Insert(i, root_RB, root_RB);
-        N--;
     }
 
-    int width = this->width() - 88;
+
     scene_RB->clear();
-    //scene_RB->setSceneRect(0, 0, width,this->height());
-    int height = GetHeight(root_RB);
-   // double dx = std::pow(2, height) * 25;
     DrawTree(scene_RB, root_RB, Height/2, Width/2  - 75);
 }
 void MainWindow::on_button_insertSomeTreap_clicked()
 {
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Insert Some";
+        Synchronize(-1, type);
+        return;
+    }
     QString s = "N";
     int N = Read_InsertSome(s);
     if (N == -1) return;
@@ -670,21 +884,30 @@ void MainWindow::on_button_insertSomeTreap_clicked()
     int b = Read_InsertSome(s);
     if (b == -1) return;
 
-    for (int i = a; i < b && N > 0; ++i) {
-        if (FindElem(root_Treap, i) ) continue;
-        Insert(i, root_Treap);
-        N--;
+    while (N--) {
+        int num = Random(a, b);
+
+        if (FindElem(root_Treap, num)) {
+            N+=1;
+        } else {
+            Insert(num, root_Treap);
+        }
     }
 
     scene_Treap->clear();
   //  scene_AVL->setSceneRect(0,0, Width, Height);
-    int height = GetHeight(root_Treap);
+   //  int height = GetHeight(root_Treap);
     //double dx = std::pow(2, height) * 25;
     //double dx = 40;
     DrawTree(scene_Treap, root_Treap, Height/2, Width/2  - 75);
 }
 void MainWindow::on_button_insertSomeSplay_clicked()
 {
+    if (ui->checkBox -> isChecked()) {
+        QString type = "Insert Some";
+        Synchronize(-1, type);
+        return;
+    }
     QString s = "N";
     int N = Read_InsertSome(s);
     if (N == -1) return;
@@ -697,14 +920,19 @@ void MainWindow::on_button_insertSomeSplay_clicked()
     int b = Read_InsertSome(s);
     if (b == -1) return;
 
-    for (int i = a; i < b && N > 0; ++i) {
-        if (FindElem(root_Splay, i) ) continue;
-        Insert(root_Splay, root_Splay, i);
-        N--;
+
+    while (N--) {
+        int num = Random(a, b);
+
+        if (FindElem(root_Splay, num)) {
+            N+=1;
+        } else {
+            Insert(root_Splay, root_Splay, num);
+        }
     }
 
     scene_Splay->clear();
-    int height = GetHeight(root_Splay);
+    // int height = GetHeight(root_Splay);
    // double dx = std::pow(2, height) * 25;
   //  double dx = 40;
     DrawTree(scene_Splay, root_Splay, Height/2, Width/2  - 75);
