@@ -1,0 +1,3 @@
+﻿  RB_tree.cpp
+C:\praki\trees\RB_tree\RB_tree.cpp(178): warning C4715: FindMax: значение возвращается не при всех путях выполнения
+  RB_tree.vcxproj -> C:\praki\trees\RB_tree\Debug\RB_tree.exe
